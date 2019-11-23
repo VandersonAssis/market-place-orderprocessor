@@ -14,8 +14,8 @@ public class ProcessOrderConsumer {
     @Autowired
     private AmqpServiceImpl amqpService;
 
-    @RabbitListener(queues = "${amqp.process.order.queue.name}")
-    public void consume(String payload) {
+    @RabbitListener(queues = "${amqp.mppu.process.order.queue}")
+    public void consume(String payload) throws Exception {
         this.handleProcessing(payload);
     }
 

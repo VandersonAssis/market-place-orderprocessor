@@ -1,40 +1,66 @@
 package com.market.orderprocessor.config;
 
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Declarables;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @EnableRabbit
 @Configuration
 public class AmqpConfig {
-    @Value("${amqp.process.order.queue.name}")
-    private String processOrderQueueName;
-
-    @Value("${amqp.order.processed.queue.name}")
+    @Value("${amqp.mpop.order.processed.queue}")
     private String orderProcessedQueueName;
 
-    @Value("${amqp.order.processed.queue.name.ex}")
-    private String orderProcessedQueueExchangeName;
+    @Value("${amqp.mpop.order.processed.ex}")
+    private String orderProcessedExchangeName;
+
+    @Value("${amqp.mpop.order.processed.dlq}")
+    private String orderProcessedDlqName;
+
+    @Value("${amqp.mpop.order.processed.dlx}")
+    private String orderProcessedDlxName;
+
+    @Value("${amqp.mpop.order.processed.routing.key}")
+    private String orderProcessedRoutingKey;
 
     @Bean
-    public Queue processOrderQueue() {
-        return new Queue(this.processOrderQueueName);
+    public Queue orderProcessedQueue() {
+        Map<String, Object> args = new HashMap<>();
+        args.put("x-dead-letter-exchange", this.orderProcessedDlxName);
+        args.put("x-dead-letter-routing-key", this.orderProcessedRoutingKey);
+        return new Queue(this.orderProcessedQueueName, true, false, false, args);
     }
 
     @Bean
-    public Declarables topicExchangeBindings() {
-        Queue orderProcessedQueue = new Queue(this.orderProcessedQueueName);
-        TopicExchange orderProcessedExchange = new TopicExchange(this.orderProcessedQueueExchangeName);
+    public Declarables orderProcessedBindings() {
+        Queue orderProcessedQueue = this.orderProcessedQueue();
+        TopicExchange orderProcessedExchange = new TopicExchange(this.orderProcessedExchangeName);
 
-        return new Declarables(orderProcessedQueue, orderProcessedExchange, BindingBuilder.bind(orderProcessedQueue).to(orderProcessedExchange).with("ORDER_PROCESSED"));
+        return new Declarables(orderProcessedQueue, orderProcessedExchange, BindingBuilder.bind(orderProcessedQueue)
+                .to(orderProcessedExchange).with(this.orderProcessedRoutingKey));
+    }
+
+    @Bean
+    public Queue orderProcessedDlq() {
+         return new Queue(this.orderProcessedDlqName);
+    }
+
+    @Bean
+    public TopicExchange orderProcessedDlx() {
+        return new TopicExchange(this.orderProcessedDlxName);
+    }
+
+    @Bean
+    public Binding bindOrderProcessedDlq() {
+        return BindingBuilder.bind(this.orderProcessedDlq()).to(this.orderProcessedDlx())
+                .with(this.orderProcessedRoutingKey);
     }
 
     public String orderProcessedExchangeName() {
-        return this.orderProcessedQueueExchangeName;
+        return this.orderProcessedExchangeName;
     }
 }
