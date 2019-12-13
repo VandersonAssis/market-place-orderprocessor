@@ -16,6 +16,7 @@ public class ProcessOrderConsumer {
 
     @RabbitListener(queues = "${amqp.mppu.process.order.queue}")
     public void consume(String payload) throws Exception {
+        //It's important to throw the exception above, or else the dead letter queue won't be filled when an exception happens here
         this.handleProcessing(payload);
     }
 
