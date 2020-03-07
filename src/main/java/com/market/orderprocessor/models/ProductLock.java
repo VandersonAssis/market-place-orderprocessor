@@ -18,31 +18,35 @@ public class ProductLock {
         return lockId;
     }
 
-    public void setLockId(String lockId) {
+    public ProductLock setLockId(String lockId) {
         this.lockId = lockId;
+        return this;
     }
 
     public String getIdProduct() {
         return idProduct;
     }
 
-    public void setIdProduct(String idProduct) {
+    public ProductLock setIdProduct(String idProduct) {
         this.idProduct = idProduct;
+        return this;
     }
 
     public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Integer quantity) {
+    public ProductLock setQuantity(Integer quantity) {
         this.quantity = quantity;
+        return this;
     }
 
     public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(OrderStatus orderStatus) {
+    public ProductLock setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
+        return this;
     }
 }

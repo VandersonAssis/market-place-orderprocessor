@@ -27,7 +27,9 @@
 
 		<sonar.coverage.exclusions>
 			**/MarketPlaceOrderprocessorApplication.java,
-			**/documents/**/*
+			**/models/**/*,
+			**/config/**/*,
+			**/processors/**/*
 		</sonar.coverage.exclusions>
 	</properties>
 
