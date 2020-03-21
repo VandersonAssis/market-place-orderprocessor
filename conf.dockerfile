@@ -5,4 +5,4 @@ RUN mkdir /opt/app
 COPY /target/market-place-orderprocessor-0.0.1.jar /opt/app
 WORKDIR /opt/app
 CMD java -jar market-place-orderprocessor-0.0.1.jar
-EXPOSE 8082
+EXPOSE 8021
