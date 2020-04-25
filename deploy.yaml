@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: market-place-orderprocessor
+spec:
+  selector:
+    app: market-place-orderprocessor
+  ports:
+    - protocol: TCP
+      port: 8080
+      nodePort: 30087
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: market-place-orderprocessor
+spec:
+  selector:
+    matchLabels:
+      app: market-place-orderprocessor
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: market-place-orderprocessor
+    spec:
+      containers:
+        - name: market-place-orderprocessor
+          image: market-place-orderprocessor
+          env:
+            - name: "KUBERNETES_NAMESPACE"
+              valueFrom:
+                fieldRef:
+                  fieldPath: "metadata.namespace"
+          ports:
+            - containerPort: 8080
