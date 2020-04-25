@@ -1,0 +1,7 @@
+spring.application.name: market-place-sellers
+logging.level.org.springframework.cloud.kubernetes: DEBUG
+
+management:
+  endpoint:
+    restart:
+      enabled: true
